@@ -39,13 +39,11 @@ function Footer() {
         <div>
           <h3 className="text-white font-semibold mb-4 text-lg">About Us</h3>
           <ul className="space-y-2 text-sm">
-            <li>Deliver industry-relevant learning</li>
-            <li>Bridge academic and professional gaps</li>
-            <li>Skilling programs with hands-on learning</li>
-            <li>Industry-oriented internships</li>
-            <li>Real-time project development</li>
-            <li>Technical consultancy and expert guidance</li>
-          </ul>
+            <li>International Tours</li>
+            <li>Adventure & Wildlife</li>
+            <li>Cultural Experiences</li>
+            <li>Travel Community</li>
+       </ul>
         </div>
 
         {/* Column 3 - Contact */}
