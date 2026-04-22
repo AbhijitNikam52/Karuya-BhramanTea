@@ -139,89 +139,119 @@ function Header() {
       </div>
 
       {/* MOBILE MENU */}
-      {isOpen && (
-        <div className="md:hidden bg-white shadow-md px-6 py-4 space-y-4">
-          {/* HOME */}
-          <details>
-            <summary className="cursor-pointer font-medium">Home</summary>
-            <div className="pl-4 mt-2 space-y-2">
-              <Link to="/about" onClick={() => setIsOpen(false)}>
-                About Us
-              </Link>
-              <Link to="/contact" onClick={() => setIsOpen(false)}>
-                Contact Us
-              </Link>
-              <Link to="/gallery" onClick={() => setIsOpen(false)}>
-                Gallery
-              </Link>
-            </div>
-          </details>
+{isOpen && (
+  <div className="md:hidden fixed top-[72px] left-0 w-full bg-white shadow-lg z-40 max-h-[80vh] overflow-y-auto">
 
-          {/* MAGAZINE */}
-          <details>
-            <summary className="cursor-pointer font-medium">Magazine</summary>
-            <div className="pl-4 mt-2">
-              <Link to="/magazine" onClick={() => setIsOpen(false)}>
-                Blogs
-              </Link>
-            </div>
-          </details>
+    <div className="px-6 py-4 space-y-4 text-gray-800">
 
-          {/* KARUYA */}
-          <details>
-            <summary className="cursor-pointer font-medium">
-              Karuya BhramanTea
-            </summary>
+      {/* HOME */}
+      <details className="border-b pb-2">
+        <summary className="cursor-pointer font-medium py-2">
+          Home
+        </summary>
 
-            <div className="pl-4 mt-2 space-y-2">
-              {/* Tours nested */}
-              <details>
-                <summary className="cursor-pointer">Tours</summary>
-                <div className="pl-4 mt-2">
-                  <Link
-                    to="/tours/ladakh-adventure"
-                    onClick={() => setIsOpen(false)}
-                    className="block"
-                  >
-                    Ladakh Adventure Tour
-                  </Link>
-                </div>
-              </details>
-
-              <Link to="/packages" onClick={() => setIsOpen(false)}>
-                Packages
-              </Link>
-              <Link to="/national-tourism" onClick={() => setIsOpen(false)}>
-                National Tourism
-              </Link>
-              <Link
-                to="/international-tourism"
-                onClick={() => setIsOpen(false)}
-              >
-                International Tourism
-              </Link>
-              <Link to="/state-tourism" onClick={() => setIsOpen(false)}>
-                State Tourism
-              </Link>
-              <Link to="/hinduism" onClick={() => setIsOpen(false)}>
-                Hinduism (Exploring the Culture)
-              </Link>
-            </div>
-          </details>
-
-          <hr />
-
-          <Link to="/shop" onClick={() => setIsOpen(false)}>
-            Shop
+        <div className="pl-4 mt-2 space-y-2 text-sm">
+          <Link to="/about" onClick={() => setIsOpen(false)} className="block">
+            About Us
           </Link>
-          <Link to="/login" onClick={() => setIsOpen(false)}>
-            Login
+
+          <Link to="/contact" onClick={() => setIsOpen(false)} className="block">
+            Contact Us
           </Link>
-          <Link to="/signup" onClick={() => setIsOpen(false)}>
-            Signup
+
+          <Link to="/gallery" onClick={() => setIsOpen(false)} className="block">
+            Gallery
           </Link>
         </div>
-      )}
+      </details>
+
+      {/* MAGAZINE */}
+      <details className="border-b pb-2">
+        <summary className="cursor-pointer font-medium py-2">
+          Magazine
+        </summary>
+
+        <div className="pl-4 mt-2 text-sm">
+          <Link to="/magazine" onClick={() => setIsOpen(false)} className="block">
+            Blogs
+          </Link>
+        </div>
+      </details>
+
+      {/* KARUYA */}
+      <details className="border-b pb-2">
+        <summary className="cursor-pointer font-medium py-2">
+          Karuya BhramanTea
+        </summary>
+
+        <div className="pl-4 mt-2 space-y-2 text-sm">
+
+          {/* Tours nested */}
+          <details>
+            <summary className="cursor-pointer py-1">
+              Tours
+            </summary>
+
+            <div className="pl-4 mt-2">
+              <Link
+                to="/tours/ladakh-adventure"
+                onClick={() => setIsOpen(false)}
+                className="block"
+              >
+                Ladakh Adventure Tour
+              </Link>
+            </div>
+          </details>
+
+          <Link to="/packages" onClick={() => setIsOpen(false)} className="block">
+            Packages
+          </Link>
+
+          <Link to="/national-tourism" onClick={() => setIsOpen(false)} className="block">
+            National Tourism
+          </Link>
+
+          <Link to="/international-tourism" onClick={() => setIsOpen(false)} className="block">
+            International Tourism
+          </Link>
+
+          <Link to="/state-tourism" onClick={() => setIsOpen(false)} className="block">
+            State Tourism
+          </Link>
+
+          <Link to="/hinduism" onClick={() => setIsOpen(false)} className="block">
+            Hinduism (Exploring the Culture)
+          </Link>
+
+        </div>
+      </details>
+
+      {/* Bottom Links */}
+
+      <div className="pt-4 space-y-3">
+
+        <Link to="/shop" onClick={() => setIsOpen(false)} className="block">
+          🛒 Shop
+        </Link>
+
+        <Link to="/login" onClick={() => setIsOpen(false)} className="block">
+          Login
+        </Link>
+
+        <Link
+          to="/signup"
+          onClick={() => setIsOpen(false)}
+          className="block bg-green-800 text-white px-4 py-2 rounded-lg text-center"
+        >
+          Signup
+        </Link>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     </header>
   );
 }
