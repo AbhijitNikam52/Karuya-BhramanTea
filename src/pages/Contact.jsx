@@ -6,145 +6,189 @@ import {
   FaInstagram,
   FaFacebookF,
 } from "react-icons/fa";
+import { useNotification } from "../context/NotificationContext";
 
 function Contact() {
+  const { showPopup } = useNotification();
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    showPopup({
+      title: "Message Sent",
+      message: "Thank you for reaching out! We will reply to your email shortly.",
+      type: "success"
+    });
+    e.target.reset();
+  };
+
   return (
-    <div className="container mx-auto px-6 py-16 space-y-14">
+    <div className="bg-[#FAF8F5] min-h-screen py-16 space-y-16">
       {/* Heading Section */}
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <h2 className="text-4xl font-bold text-amber-900">Contact Us</h2>
-
-        <p className="text-gray-700 text-lg">
-          We would love to help you plan your next journey.
+      <div className="text-center max-w-3xl mx-auto px-6 space-y-4">
+        <span className="text-xs uppercase tracking-widest font-bold text-amber-700">Get In Touch</span>
+        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Contact Us</h1>
+        <div className="w-16 h-1 bg-[#1F4027] mx-auto mt-2 rounded-full"></div>
+        <p className="text-lg text-gray-600 font-light leading-relaxed">
+          We would love to help you plan your next journey. Whether you are looking for wildlife safaris, 
+          international tours, pilgrim trips, or customized travel experiences, feel free to reach out.
         </p>
-
-        <p className="text-gray-600">
-          Whether you are looking for wildlife safaris, international tours,
-          pilgrim trips, or customized travel experiences, feel free to reach
-          out to us.
-        </p>
-
-        <h3 className="text-2xl font-semibold text-green-800">
+        <h3 className="text-2xl font-bold text-[#1F4027] font-display">
           BhramanTea Tours
         </h3>
       </div>
 
       {/* Info Cards */}
-      <div className="grid md:grid-cols-3 gap-8">
+      <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8">
         {/* Address */}
-        <div className="bg-white shadow-xl rounded-2xl p-8 text-center hover:shadow-2xl transition">
-          <div className="text-3xl mb-4 text-green-800">
-            <FaMapMarkerAlt />
+        <div className="bg-white border border-gray-100 shadow-md rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="w-12 h-12 bg-emerald-50 text-[#1F4027] rounded-full flex items-center justify-center text-xl mx-auto mb-6">
+              <FaMapMarkerAlt />
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Our Address</h3>
+            <div className="text-gray-500 text-sm font-light space-y-1 leading-relaxed">
+              <p className="font-semibold text-gray-700">Shop 1, Swapnapurti,</p>
+              <p>Pujya Sri Sri Ravishankar Marg,</p>
+              <p>beside Biryanisht, Nashik Road,</p>
+              <p>Nashik, Maharashtra 422006</p>
+            </div>
           </div>
-
-          <h3 className="text-xl font-semibold mb-3">Address</h3>
-
-          <p className="text-gray-600">Shop 1, Swapnapurti,</p>
-
-          <p className="text-gray-600">Pujya Sri Sri Ravishankar Marg,</p>
-
-          <p className="text-gray-600">beside Biryanisht,</p>
-
-          <p className="text-gray-600">Nashik Road, Nashik</p>
-
-          <p className="text-gray-600">Maharashtra 422006</p>
+          <div className="mt-6 pt-4 border-t border-gray-50 text-xs text-amber-700 font-medium uppercase tracking-wider">
+            Main Office
+          </div>
         </div>
 
         {/* Contact Numbers */}
-        <div className="bg-white shadow-xl rounded-2xl p-8 text-center hover:shadow-2xl transition">
-          <div className="text-3xl mb-4 text-green-800">
-            <FaPhoneAlt />
+        <div className="bg-white border border-gray-100 shadow-md rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="w-12 h-12 bg-emerald-50 text-[#1F4027] rounded-full flex items-center justify-center text-xl mx-auto mb-6">
+              <FaPhoneAlt />
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Phone / WhatsApp</h3>
+            <div className="space-y-4 text-gray-600 text-sm font-light">
+              <div className="flex items-center justify-center gap-2.5">
+                <FaWhatsapp className="text-green-600 text-lg" />
+                <div>
+                  <p className="text-xs text-gray-400 font-medium text-left">Nashik Office</p>
+                  <p className="font-semibold text-gray-700">+91 9220829392</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-center gap-2.5">
+                <FaWhatsapp className="text-green-600 text-lg" />
+                <div>
+                  <p className="text-xs text-gray-400 font-medium text-left">Mumbai Office</p>
+                  <p className="font-semibold text-gray-700">+91 9702001661</p>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <h3 className="text-xl font-semibold mb-3">Phone / WhatsApp</h3>
-
-          <p className="text-gray-600 flex items-center justify-center gap-2">
-            <FaWhatsapp className="text-green-600" />
-            Nashik : +91 9220829392
-          </p>
-
-          <p className="text-gray-600 flex items-center justify-center gap-2 mt-2">
-            <FaWhatsapp className="text-green-600" />
-            Mumbai : +91 9702001661
-          </p>
+          <div className="mt-6 pt-4 border-t border-gray-50 text-xs text-amber-700 font-medium uppercase tracking-wider">
+            Quick Connect
+          </div>
         </div>
 
         {/* Email & Social */}
-        <div className="bg-white shadow-xl rounded-2xl p-8 text-center hover:shadow-2xl transition">
-          <div className="text-3xl mb-4 text-green-800">
-            <FaEnvelope />
+        <div className="bg-white border border-gray-100 shadow-md rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="w-12 h-12 bg-emerald-50 text-[#1F4027] rounded-full flex items-center justify-center text-xl mx-auto mb-6">
+              <FaEnvelope />
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Email & Social</h3>
+            <p className="text-gray-600 font-medium mb-6">bhramantea@gmail.com</p>
+            
+            <div className="flex justify-center gap-4">
+              <a
+                href="https://www.instagram.com/bhramantea"
+                target="_blank"
+                rel="noreferrer"
+                className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-pink-600 hover:bg-pink-50 hover:scale-105 transition"
+              >
+                <FaInstagram />
+              </a>
+
+              <a
+                href="https://www.facebook.com/bhramantea"
+                target="_blank"
+                rel="noreferrer"
+                className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-blue-600 hover:bg-blue-50 hover:scale-105 transition"
+              >
+                <FaFacebookF />
+              </a>
+            </div>
           </div>
-
-          <h3 className="text-xl font-semibold mb-3">Email & Social</h3>
-
-          <p className="text-gray-600 mb-4">bhramantea@gmail.com</p>
-
-          <div className="flex justify-center gap-4 text-xl">
-            <a
-              href="https://www.instagram.com/bhramantea"
-              target="_blank"
-              rel="noreferrer"
-              className="text-pink-600 hover:scale-110 transition"
-            >
-              <FaInstagram />
-            </a>
-
-            <a
-              href="https://www.facebook.com/bhramantea"
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-600 hover:scale-110 transition"
-            >
-              <FaFacebookF />
-            </a>
+          <div className="mt-6 pt-4 border-t border-gray-50 text-xs text-amber-700 font-medium uppercase tracking-wider">
+            Online Support
           </div>
         </div>
       </div>
 
-      {/* Message Section */}
-      <div className="max-w-3xl mx-auto text-center text-gray-700 text-lg">
-        <p>
-          Our team will respond as quickly as possible to assist you with tour
-          details, bookings, and travel guidance.
-        </p>
-      </div>
+      {/* Message & Form Section */}
+      <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-12 gap-12 items-stretch">
+        
+        {/* Left Side: Map & Note */}
+        <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
+          <div className="bg-white/60 border border-gray-100 p-8 rounded-3xl shadow-sm text-left">
+            <h4 className="font-bold text-lg text-gray-900 mb-2">Our Service Commitment</h4>
+            <p className="text-gray-500 font-light text-sm leading-relaxed">
+              Our travel specialists will respond as quickly as possible (usually within 2 hours during business hours) 
+              to assist you with customized itineraries, booking advice, and details.
+            </p>
+          </div>
+          <div className="flex-grow rounded-3xl overflow-hidden shadow-lg border border-gray-100 min-h-[300px]">
+            <iframe
+              title="map"
+              className="w-full h-full min-h-[300px]"
+              src="https://www.google.com/maps?q=Shop%201%20Swapnapurti%20Ravishankar%20Marg%20Nashik&output=embed"
+            ></iframe>
+          </div>
+        </div>
 
-      {/* Map Section */}
-      <div className="rounded-2xl overflow-hidden shadow-lg">
-        <iframe
-          title="map"
-          className="w-full h-96"
-          src="https://www.google.com/maps?q=Shop%201%20Swapnapurti%20Ravishankar%20Marg%20Nashik&output=embed"
-        ></iframe>
-      </div>
+        {/* Right Side: Message Form */}
+        <div className="lg:col-span-6 bg-white border border-gray-100 p-8 md:p-10 rounded-3xl shadow-xl">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-left">
+            Send Us a Message
+          </h3>
 
-      {/* Schedule Call Form */}
-      <div className="max-w-2xl mx-auto bg-[#f4f1ed] p-10 rounded-2xl shadow-lg space-y-6">
-        <h3 className="text-2xl font-semibold text-center text-amber-900">
-          Send Us a Message
-        </h3>
+          <form onSubmit={handleSendMessage} className="space-y-5 text-left">
+            <div>
+              <label className="block text-gray-700 mb-1.5 text-sm font-semibold">Your Name</label>
+              <input
+                type="text"
+                placeholder="Enter your name"
+                required
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition-all bg-gray-50/50"
+              />
+            </div>
 
-        <input
-          type="text"
-          placeholder="Your Name"
-          className="w-full border border-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800"
-        />
+            <div>
+              <label className="block text-gray-700 mb-1.5 text-sm font-semibold">Your Email</label>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                required
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition-all bg-gray-50/50"
+              />
+            </div>
 
-        <input
-          type="email"
-          placeholder="Your Email"
-          className="w-full border border-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800"
-        />
+            <div>
+              <label className="block text-gray-700 mb-1.5 text-sm font-semibold">Message</label>
+              <textarea
+                placeholder="Write your message here..."
+                rows="4"
+                required
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition-all bg-gray-50/50"
+              ></textarea>
+            </div>
 
-        <textarea
-          placeholder="Message"
-          rows="4"
-          className="w-full border border-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800"
-        ></textarea>
+            <button
+              type="submit"
+              className="w-full bg-[#1F4027] hover:bg-[#152e1c] text-white py-3.5 rounded-full font-semibold transition shadow-md hover:shadow-lg"
+            >
+              Send Message
+            </button>
+          </form>
+        </div>
 
-        <button className="w-full bg-green-800 text-white py-3 rounded-lg hover:bg-green-900 transition">
-          Send Message
-        </button>
       </div>
     </div>
   );
