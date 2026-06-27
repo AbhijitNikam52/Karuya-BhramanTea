@@ -10,7 +10,7 @@ import {
 import { useNotification } from "../context/NotificationContext";
 
 function Contact() {
-  const { showPopup } = useNotification();
+  const { showToast } = useNotification();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -43,30 +43,18 @@ function Contact() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        showPopup({
-          title: "Message Sent",
-          message: data.message || "Thank you for reaching out! We will reply to your email shortly.",
-          type: "success",
-        });
+        showToast(data.message || "Thank you for reaching out! We will reply to your email shortly.", "success");
         setFormData({
           name: "",
           email: "",
           message: "",
         });
       } else {
-        showPopup({
-          title: "Submission Failed",
-          message: data.message || "Something went wrong. Please try again.",
-          type: "error",
-        });
+        showToast(data.message || "Something went wrong. Please try again.", "error");
       }
     } catch (error) {
       console.error("API Error submitting form:", error);
-      showPopup({
-        title: "Network Error",
-        message: "Failed to connect to backend server. Please try again later.",
-        type: "error",
-      });
+      showToast("Failed to connect to backend server. Please try again later.", "error");
     } finally {
       setLoading(false);
     }
