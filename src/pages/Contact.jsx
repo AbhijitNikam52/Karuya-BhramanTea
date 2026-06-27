@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   FaPhoneAlt,
   FaWhatsapp,
@@ -10,15 +11,65 @@ import { useNotification } from "../context/NotificationContext";
 
 function Contact() {
   const { showPopup } = useNotification();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
 
-  const handleSendMessage = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    showPopup({
-      title: "Message Sent",
-      message: "Thank you for reaching out! We will reply to your email shortly.",
-      type: "success"
-    });
-    e.target.reset();
+    setLoading(true);
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4010/api";
+      const response = await fetch(`${apiUrl}/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        showPopup({
+          title: "Message Sent",
+          message: data.message || "Thank you for reaching out! We will reply to your email shortly.",
+          type: "success",
+        });
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
+        });
+      } else {
+        showPopup({
+          title: "Submission Failed",
+          message: data.message || "Something went wrong. Please try again.",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("API Error submitting form:", error);
+      showPopup({
+        title: "Network Error",
+        message: "Failed to connect to backend server. Please try again later.",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -154,9 +205,13 @@ function Contact() {
               <label className="block text-gray-700 mb-1.5 text-sm font-semibold">Your Name</label>
               <input
                 type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Enter your name"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition-all bg-gray-50/50"
+                disabled={loading}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition-all bg-gray-50/50 disabled:opacity-50"
               />
             </div>
 
@@ -164,27 +219,36 @@ function Contact() {
               <label className="block text-gray-700 mb-1.5 text-sm font-semibold">Your Email</label>
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Enter your email"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition-all bg-gray-50/50"
+                disabled={loading}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition-all bg-gray-50/50 disabled:opacity-50"
               />
             </div>
 
             <div>
               <label className="block text-gray-700 mb-1.5 text-sm font-semibold">Message</label>
               <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
                 placeholder="Write your message here..."
                 rows="4"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition-all bg-gray-50/50"
+                disabled={loading}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition-all bg-gray-50/50 disabled:opacity-50"
               ></textarea>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-[#1F4027] hover:bg-[#152e1c] text-white py-3.5 rounded-full font-semibold transition shadow-md hover:shadow-lg"
+              disabled={loading}
+              className="w-full bg-[#1F4027] hover:bg-[#152e1c] text-white py-3.5 rounded-full font-semibold transition shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              Send Message
+              {loading ? "Sending Message..." : "Send Message"}
             </button>
           </form>
         </div>
