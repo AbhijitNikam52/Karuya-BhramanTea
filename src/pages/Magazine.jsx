@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import defaultArticleImg from "../assets/castle.jpg";
 import tigerImg from "../assets/tiger.jpg";
 import hillImg from "../assets/hill.jpg";
+import { useNotification } from "../context/NotificationContext";
 
 function Magazine() {
+  const { showToast } = useNotification();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
 
@@ -59,6 +61,12 @@ function Magazine() {
     const matchesCategory = activeTab === "All" || blog.category === activeTab;
     return matchesSearch && matchesCategory;
   });
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    showToast("Thanks for subscribing to our newsletter!", "success");
+    e.target.reset();
+  };
 
   return (
     <div className="min-h-screen py-16 px-6 bg-[#FAF8F5]">
@@ -173,7 +181,7 @@ function Magazine() {
           </p>
         </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); alert("Thanks for subscribing!"); }} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto pt-2">
+        <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto pt-2">
           <input
             type="email"
             placeholder="Your email address"
