@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
+import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, logout, isAdmin } = useAuth();
+  const { cartCount, setIsCartOpen } = useCart();
 
   const isActive = (path) => location.pathname === path;
 
@@ -43,6 +47,11 @@ function Header() {
           {/* GALLERY */}
           <Link to="/gallery" className={navLinkClass("/gallery")}>
             Gallery
+          </Link>
+
+          {/* SHOP */}
+          <Link to="/shop" className={navLinkClass("/shop")}>
+            Shop
           </Link>
 
           {/* MAGAZINE */}
@@ -135,27 +144,47 @@ function Header() {
 
         {/* RIGHT SIDE DESKTOP */}
         <div className="hidden lg:flex items-center space-x-5">
-          <Link
-            to="/shop"
-            className="text-xl p-2 rounded-full hover:bg-amber-50 text-gray-700 hover:text-amber-800 transition duration-300"
-            title="Cart"
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="text-xl p-2 rounded-full hover:bg-amber-50 text-gray-700 hover:text-amber-800 transition duration-300 relative"
+            title="Open Cart"
           >
             🛒
-          </Link>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-amber-700 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                {cartCount}
+              </span>
+            )}
+          </button>
 
-          <Link
-            to="/login"
-            className="text-gray-700 hover:text-amber-800 font-medium transition duration-300"
-          >
-            Login
-          </Link>
-
-          <Link
-            to="/signup"
-            className="bg-[#1F4027] hover:bg-[#152e1c] text-white px-5 py-2.5 rounded-full font-medium transition duration-300 shadow-sm hover:shadow-md text-sm"
-          >
-            Signup
-          </Link>
+          {user ? (
+            <>
+              {isAdmin && (
+                <Link
+                  to="/admin/shop"
+                  className="border border-[#1F4027] text-[#1F4027] hover:bg-[#1F4027] hover:text-white px-4 py-2.5 rounded-full font-medium transition text-sm"
+                >
+                  Admin Panel
+                </Link>
+              )}
+              <span className="text-gray-600 text-sm font-medium">
+                Hi, {user.name.split(" ")[0]}
+              </span>
+              <button
+                onClick={logout}
+                className="text-gray-700 hover:text-red-700 font-medium transition duration-300 text-sm"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="bg-[#1F4027] hover:bg-[#152e1c] text-white px-6 py-2.5 rounded-full font-medium transition duration-300 shadow-sm hover:shadow-md text-sm"
+            >
+              Login
+            </Link>
+          )}
         </div>
 
         {/* MOBILE MENU BUTTON */}
@@ -288,31 +317,57 @@ function Header() {
 
             {/* Bottom Links */}
             <div className="pt-4 space-y-3">
-              <Link
-                to="/shop"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 font-medium py-2 text-gray-700 hover:text-amber-800"
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  setIsCartOpen(true);
+                }}
+                className="flex items-center gap-2 font-medium py-2 text-gray-700 hover:text-amber-800 w-full text-left"
               >
-                🛒 Shop
-              </Link>
+                🛒 Cart
+                {cartCount > 0 && (
+                  <span className="bg-amber-700 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
 
-              <div className="grid grid-cols-2 gap-4 pt-2">
+              {user && isAdmin && (
                 <Link
-                  to="/login"
+                  to="/admin/shop"
                   onClick={() => setIsOpen(false)}
-                  className="border border-gray-300 py-2.5 rounded-full text-center font-medium text-gray-700 hover:bg-gray-50 transition"
+                  className="block font-medium py-2 text-[#1F4027] hover:text-[#152e1c]"
                 >
-                  Login
+                  ⚙️ Admin Panel
                 </Link>
+              )}
 
-                <Link
-                  to="/signup"
-                  onClick={() => setIsOpen(false)}
-                  className="bg-[#1F4027] hover:bg-[#152e1c] text-white py-2.5 rounded-full text-center font-medium transition"
-                >
-                  Signup
-                </Link>
-              </div>
+              {user ? (
+                <div className="pt-2 border-t border-gray-100 flex flex-col gap-2">
+                  <span className="text-gray-500 text-sm">
+                    Logged in as: <span className="font-semibold text-gray-800">{user.name}</span>
+                  </span>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsOpen(false);
+                    }}
+                    className="w-full border border-red-200 hover:border-red-300 text-red-600 py-2.5 rounded-full text-center font-medium transition"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="pt-2">
+                  <Link
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="block bg-[#1F4027] hover:bg-[#152e1c] text-white py-3 rounded-full text-center font-medium transition"
+                  >
+                    Login
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

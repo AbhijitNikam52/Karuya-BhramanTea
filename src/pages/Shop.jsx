@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import defaultArticleImg from "../assets/castle.jpg";
 import hillImg from "../assets/hill.jpg";
 import { useNotification } from "../context/NotificationContext";
+import { useCart } from "../context/CartContext";
 
 function Shop() {
-  const [cartCount, setCartCount] = useState(0);
   const { showToast, showPopup } = useNotification();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { addToCart, cartCount, setIsCartOpen } = useCart();
 
   const teaProducts = [
     {
@@ -50,9 +53,29 @@ function Shop() {
     }
   ];
 
-  const addToCart = (productName) => {
-    setCartCount(prev => prev + 1);
-    showToast(`${productName} added to cart!`, "success");
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:4010/api/products");
+        const data = await response.json();
+        if (data.success && data.data.length > 0) {
+          setProducts(data.data);
+        } else {
+          setProducts(teaProducts);
+        }
+      } catch (err) {
+        console.error("Failed to load products from API:", err);
+        setProducts(teaProducts);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+  }, []);
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    showToast(`${product.name} added to cart!`, "success");
   };
 
   return (
@@ -72,20 +95,23 @@ function Shop() {
         </div>
 
         {/* Cart Status Badge */}
-        <div className="flex items-center gap-3 bg-white border border-gray-100 px-6 py-3 rounded-2xl shadow-sm">
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="flex items-center gap-3 bg-white border border-gray-100 px-6 py-3 rounded-2xl shadow-sm hover:shadow-md transition text-left focus:outline-none"
+        >
           <span className="text-xl">🛒</span>
           <div>
             <p className="text-xs text-gray-400 font-medium">Your Cart</p>
             <p className="font-bold text-gray-800 text-sm">{cartCount} items</p>
           </div>
-        </div>
+        </button>
       </div>
 
       {/* Products Grid */}
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-        {teaProducts.map((product) => (
+        {products.map((product) => (
           <div
-            key={product.id}
+            key={product._id || product.id}
             className="bg-white border border-gray-100/80 shadow-md hover:shadow-xl rounded-2xl overflow-hidden flex flex-col justify-between group transition-all duration-300"
           >
             {/* Image Box */}
@@ -105,20 +131,25 @@ function Shop() {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center text-xs text-gray-400">
                   <span>{product.category}</span>
-                  <span className="text-amber-800 font-medium">{product.rating}</span>
+                  <span className="text-amber-800 font-medium">{product.rating || "4.8 (Local)"}</span>
                 </div>
                 <h3 className="font-bold text-lg text-gray-900 group-hover:text-amber-800 transition leading-snug">
                   {product.name}
                 </h3>
+                {product.productId && (
+                  <div className="text-[10px] text-amber-700 font-mono font-semibold uppercase tracking-wider">
+                    ID: {product.productId}
+                  </div>
+                )}
                 <p className="text-gray-500 text-xs leading-relaxed font-light line-clamp-3">
-                  {product.desc}
+                  {product.description || product.desc}
                 </p>
               </div>
 
               <div className="pt-3.5 border-t border-gray-50 flex items-center justify-between">
                 <span className="font-bold text-xl text-gray-900 font-display">₹{product.price}</span>
                 <button
-                  onClick={() => addToCart(product.name)}
+                  onClick={() => handleAddToCart(product)}
                   className="bg-[#1F4027] hover:bg-[#152e1c] text-white px-4 py-2 rounded-full font-medium transition text-xs shadow-sm"
                 >
                   Add to Cart

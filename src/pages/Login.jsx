@@ -3,17 +3,22 @@ import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF, FaTwitter } from "react-icons/fa";
 import { useNotification } from "../context/NotificationContext";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginType, setLoginType] = useState("client");
   const [showPassword, setShowPassword] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const navigate = useNavigate();
   const { showToast, showPopup } = useNotification();
+  const { login } = useAuth();
   const [generatedCaptcha, setGeneratedCaptcha] = useState(
     Math.random().toString(36).substring(2, 6)
   );
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     if (captcha.toLowerCase() !== generatedCaptcha.toLowerCase()) {
@@ -21,12 +26,24 @@ function Login() {
       return;
     }
 
-    showPopup({
-      title: "Welcome Back!",
-      message: "You have logged in successfully.",
-      type: "success",
-      onClose: () => navigate("/")
-    });
+    try {
+      const user = await login(email, password, loginType);
+      
+      showPopup({
+        title: "Welcome Back!",
+        message: `You have logged in successfully as ${user.name}.`,
+        type: "success",
+        onClose: () => {
+          if (user.loginType === "admin" || user.role === "system_owner") {
+            navigate("/admin/shop");
+          } else {
+            navigate("/");
+          }
+        }
+      });
+    } catch (err) {
+      showToast(err.message || "Login failed. Please check your credentials.", "error");
+    }
   };
 
   return (
@@ -40,6 +57,28 @@ function Login() {
           <div className="w-10 h-0.5 bg-[#1F4027] mx-auto mt-1"></div>
         </div>
 
+        {/* Login Type Tabs */}
+        <div className="flex bg-gray-100 p-1.5 rounded-2xl mb-2">
+          <button
+            type="button"
+            onClick={() => setLoginType("client")}
+            className={`flex-1 py-2 text-xs font-semibold rounded-xl transition ${
+              loginType === "client" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            Client Login
+          </button>
+          <button
+            type="button"
+            onClick={() => setLoginType("admin")}
+            className={`flex-1 py-2 text-xs font-semibold rounded-xl transition ${
+              loginType === "admin" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            Admin Login
+          </button>
+        </div>
+
         <form onSubmit={handleLogin} className="space-y-4">
           
           {/* USERNAME */}
@@ -50,6 +89,8 @@ function Login() {
             <input
               type="text"
               placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition bg-gray-50/50"
               required
             />
@@ -64,6 +105,8 @@ function Login() {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition bg-gray-50/50 pr-12"
                 required
               />

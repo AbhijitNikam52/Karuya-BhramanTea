@@ -4,11 +4,17 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import { NotificationProvider } from "./context/NotificationContext";
+import { AuthProvider } from "./context/AuthContext";
+import { CartProvider } from "./context/CartContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <NotificationProvider>
-      <App />
-    </NotificationProvider>
+    <AuthProvider>
+      <CartProvider>
+        <NotificationProvider>
+          <App />
+        </NotificationProvider>
+      </CartProvider>
+    </AuthProvider>
   </BrowserRouter>
 );
