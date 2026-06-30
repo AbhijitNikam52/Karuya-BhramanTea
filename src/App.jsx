@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ChatWidget from "./components/ChatWidget";
+import CartDrawer from "./components/CartDrawer";
 
 import Home from "./pages/Home";
 import Magazine from "./pages/Magazine";
@@ -20,6 +21,7 @@ import StateTourism from "./pages/StateTourism";
 import Hinduism from "./pages/Hinduism";
 import Shop from "./pages/Shop";
 import BlogDetails from "./pages/BlogDetails";
+import AdminShop from "./pages/AdminShop";
 
 function App() {
   const { pathname } = useLocation();
@@ -50,11 +52,13 @@ function App() {
           <Route path="/state-tourism" element={<StateTourism />} />
           <Route path="/hinduism" element={<Hinduism />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/admin/shop" element={<AdminShop />} />
         </Routes>
       </main>
 
       <Footer />
       <ChatWidget />
+      <CartDrawer />
     </div>
   );
 }
