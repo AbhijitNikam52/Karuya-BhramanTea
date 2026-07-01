@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useNotification } from "../context/NotificationContext";
+import ImageCropperModal from "../components/ImageCropperModal";
 
 function AdminShop() {
   const { user, token, isAdmin } = useAuth();
@@ -17,10 +18,15 @@ function AdminShop() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("Single Origin Black Tea");
-  const [weight, setWeight] = useState("250g");
+  const [category, setCategory] = useState("Shirts");
+  const [quantity, setQuantity] = useState("10");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  // Cropper State
+  const [cropFile, setCropFile] = useState(null);
+  const [showCropper, setShowCropper] = useState(false);
 
   // Fetch products
   const fetchProducts = async () => {
@@ -57,17 +63,30 @@ function AdminShop() {
         showToast("Please upload an image file.", "error");
         return;
       }
-      setImageFile(file);
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setCropFile(file);
+      setShowCropper(true);
+      // Reset input element value so same file triggers change again if selected
+      e.target.value = "";
     }
   };
 
-  // Form Submit
+  // Handle cropped image
+  const handleCroppedImage = (croppedFile) => {
+    setImageFile(croppedFile);
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(croppedFile);
+    
+    // Close cropper modal
+    setShowCropper(false);
+    setCropFile(null);
+    showToast("Image cropped successfully!", "success");
+  };
+
+  // Form Submit (Create & Update)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -76,7 +95,7 @@ function AdminShop() {
       return;
     }
 
-    if (!imageFile) {
+    if (!editingProduct && !imageFile) {
       showToast("Please select an image file to upload.", "error");
       return;
     }
@@ -88,12 +107,19 @@ function AdminShop() {
     formData.append("price", price);
     formData.append("description", description.trim());
     formData.append("category", category);
-    formData.append("weight", weight);
-    formData.append("image", imageFile);
+    formData.append("quantity", quantity);
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
 
     try {
-      const response = await fetch("http://localhost:4010/api/products", {
-        method: "POST",
+      const url = editingProduct
+        ? `http://localhost:4010/api/products/${editingProduct._id}`
+        : "http://localhost:4010/api/products";
+      const method = editingProduct ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -103,27 +129,63 @@ function AdminShop() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        showToast("Product uploaded successfully!", "success");
+        showToast(
+          editingProduct ? "Product updated successfully!" : "Product uploaded successfully!",
+          "success"
+        );
         // Reset form
         setProductId("");
         setName("");
         setPrice("");
         setDescription("");
-        setCategory("Single Origin Black Tea");
-        setWeight("250g");
+        setCategory("Shirts");
+        setQuantity("10");
         setImageFile(null);
         setImagePreview(null);
+        setEditingProduct(null);
         // Refresh product list
         fetchProducts();
       } else {
-        showToast(data.message || "Failed to create product", "error");
+        showToast(data.message || "Failed to save product", "error");
       }
     } catch (error) {
-      console.error("Error creating product:", error);
-      showToast("An error occurred during upload. Please try again.", "error");
+      console.error("Error saving product:", error);
+      showToast("An error occurred during save. Please try again.", "error");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // Select product for editing
+  const handleEditSelect = (product) => {
+    setEditingProduct(product);
+    setProductId(product.productId);
+    setName(product.name);
+    setPrice(product.price);
+    setDescription(product.description || product.desc || "");
+    setCategory(product.category || "Shirts");
+    setQuantity(product.quantity !== undefined ? product.quantity.toString() : "10");
+    setImageFile(null);
+    setImagePreview(product.image);
+
+    // Scroll smoothly to the form container
+    const formElement = document.getElementById("productFormContainer");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Cancel edit mode
+  const handleCancelEdit = () => {
+    setEditingProduct(null);
+    setProductId("");
+    setName("");
+    setPrice("");
+    setDescription("");
+    setCategory("Shirts");
+    setQuantity("10");
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   // Delete product
@@ -132,7 +194,7 @@ function AdminShop() {
       title: "Delete Product?",
       message: `Are you sure you want to delete product '${customId}'? This action cannot be undone.`,
       type: "warning",
-      onClose: async () => {
+      onConfirm: async () => {
         try {
           const response = await fetch(`http://localhost:4010/api/products/${id}`, {
             method: "DELETE",
@@ -204,9 +266,17 @@ function AdminShop() {
         <div className="grid lg:grid-cols-12 gap-10">
           {/* Left Column: Form (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white border border-gray-100 p-6 md:p-8 rounded-3xl shadow-lg space-y-6 text-left">
+            <div id="productFormContainer" className="bg-white border border-gray-100 p-6 md:p-8 rounded-3xl shadow-lg space-y-6 text-left">
               <h2 className="text-xl font-bold text-gray-900 border-b border-gray-50 pb-3 flex items-center gap-2">
-                <span>➕</span> Add New Product
+                {editingProduct ? (
+                  <>
+                    <span>✏️</span> Edit Product
+                  </>
+                ) : (
+                  <>
+                    <span>➕</span> Add New Product
+                  </>
+                )}
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -240,7 +310,7 @@ function AdminShop() {
                   />
                 </div>
 
-                {/* Price & Weight */}
+                {/* Price & Quantity */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-gray-700 text-xs font-semibold mb-1.5 uppercase tracking-wider">
@@ -258,14 +328,16 @@ function AdminShop() {
                   </div>
                   <div>
                     <label className="block text-gray-700 text-xs font-semibold mb-1.5 uppercase tracking-wider">
-                      Weight/Size
+                      Quantity / Stock*
                     </label>
                     <input
-                      type="text"
-                      value={weight}
-                      onChange={(e) => setWeight(e.target.value)}
-                      placeholder="e.g. 250g"
+                      type="number"
+                      value={quantity}
+                      onChange={(e) => setQuantity(e.target.value)}
+                      placeholder="e.g. 10"
+                      min="0"
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition bg-gray-50/50 text-sm"
+                      required
                     />
                   </div>
                 </div>
@@ -280,11 +352,12 @@ function AdminShop() {
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1F4027]/40 focus:border-[#1F4027] transition bg-gray-50/50 text-sm"
                   >
-                    <option value="Single Origin Black Tea">Single Origin Black Tea</option>
-                    <option value="Spiced Tea Blend">Spiced Tea Blend</option>
-                    <option value="Pure Green Tea">Pure Green Tea</option>
-                    <option value="Caffeine-Free Herbal">Caffeine-Free Herbal</option>
-                    <option value="Gift Assortment">Gift Assortment</option>
+                    <option value="Shirts">Shirts</option>
+                    <option value="Caps">Caps</option>
+                    <option value="Pants">Pants</option>
+                    <option value="Tracksuits">Tracksuits</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Others">Others</option>
                   </select>
                 </div>
 
@@ -314,7 +387,7 @@ function AdminShop() {
                       accept="image/*"
                       onChange={handleImageChange}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      required={!imageFile}
+                      required={!imageFile && !editingProduct}
                     />
                     
                     {imagePreview ? (
@@ -343,8 +416,20 @@ function AdminShop() {
                   disabled={submitting}
                   className="w-full bg-[#1F4027] hover:bg-[#152e1c] text-white py-3.5 rounded-full font-semibold shadow-md hover:shadow-lg transition duration-300 disabled:opacity-50 flex items-center justify-center gap-2 text-sm mt-6"
                 >
-                  {submitting ? "Uploading Product..." : "Save Product"}
+                  {submitting
+                    ? (editingProduct ? "Updating Product..." : "Uploading Product...")
+                    : (editingProduct ? "Update Product" : "Save Product")}
                 </button>
+
+                {editingProduct && (
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className="w-full border border-gray-300 hover:bg-gray-100 text-gray-700 py-3.5 rounded-full font-semibold shadow-sm transition duration-300 text-sm mt-2"
+                  >
+                    Cancel Edit
+                  </button>
+                )}
               </form>
             </div>
           </div>
@@ -390,10 +475,14 @@ function AdminShop() {
                             ID: {product.productId}
                           </span>
                           <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
-                            {product.weight}
-                          </span>
-                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
                             {product.category}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded-full font-semibold ${
+                            (product.quantity !== undefined ? product.quantity : 10) > 0 
+                              ? "bg-emerald-50 text-emerald-800" 
+                              : "bg-red-50 text-red-800"
+                          }`}>
+                            Stock: {product.quantity !== undefined ? product.quantity : 10}
                           </span>
                         </div>
 
@@ -402,13 +491,22 @@ function AdminShop() {
                         </p>
                       </div>
 
-                      <button
-                        onClick={() => handleDelete(product._id, product.productId)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition duration-200 self-start"
-                        title="Delete Product"
-                      >
-                        🗑️
-                      </button>
+                      <div className="flex flex-col gap-1 self-start">
+                        <button
+                          onClick={() => handleEditSelect(product)}
+                          className="p-2 text-gray-400 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition duration-200"
+                          title="Edit Product"
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          onClick={() => handleDelete(product._id, product.productId)}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition duration-200"
+                          title="Delete Product"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -417,6 +515,18 @@ function AdminShop() {
           </div>
         </div>
       </div>
+
+      {/* Conditionally Render Image Cropper Modal */}
+      {showCropper && cropFile && (
+        <ImageCropperModal
+          file={cropFile}
+          onCrop={handleCroppedImage}
+          onClose={() => {
+            setShowCropper(false);
+            setCropFile(null);
+          }}
+        />
+      )}
     </div>
   );
 }

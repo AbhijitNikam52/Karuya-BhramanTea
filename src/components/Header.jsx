@@ -54,6 +54,13 @@ function Header() {
             Shop
           </Link>
 
+          {/* DASHBOARD (ADMIN ONLY) */}
+          {isAdmin && (
+            <Link to="/admin/shop" className={navLinkClass("/admin/shop")}>
+              Dashboard
+            </Link>
+          )}
+
           {/* MAGAZINE */}
           <div className="relative group">
             <button className="hover:text-amber-700 py-2 flex items-center gap-1 font-medium transition duration-300">
@@ -233,6 +240,26 @@ function Header() {
               Gallery
             </Link>
 
+            {/* SHOP */}
+            <Link
+              to="/shop"
+              onClick={() => setIsOpen(false)}
+              className="block font-medium py-2 border-b border-gray-100 hover:text-amber-800 transition"
+            >
+              Shop
+            </Link>
+
+            {/* DASHBOARD (ADMIN ONLY) */}
+            {isAdmin && (
+              <Link
+                to="/admin/shop"
+                onClick={() => setIsOpen(false)}
+                className="block font-medium py-2 border-b border-gray-100 hover:text-amber-800 transition"
+              >
+                Dashboard
+              </Link>
+            )}
+
             {/* MAGAZINE */}
             <details className="border-b border-gray-100 pb-2">
               <summary className="cursor-pointer font-medium py-2 hover:text-amber-800 focus:outline-none">
@@ -338,7 +365,7 @@ function Header() {
                   onClick={() => setIsOpen(false)}
                   className="block font-medium py-2 text-[#1F4027] hover:text-[#152e1c]"
                 >
-                  ⚙️ Admin Panel
+                  ⚙️ Dashboard
                 </Link>
               )}
 

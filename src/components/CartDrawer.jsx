@@ -14,16 +14,43 @@ function CartDrawer() {
 
   const { showToast, showPopup } = useNotification();
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cart.length === 0) return;
 
+    // Deduct stock for database products
+    const dbItems = cart
+      .filter(
+        (item) =>
+          item.product._id && /^[0-9a-fA-F]{24}$/.test(item.product._id)
+      )
+      .map((item) => ({
+        id: item.product._id,
+        quantity: item.quantity,
+      }));
+
+    if (dbItems.length > 0) {
+      try {
+        await fetch("http://localhost:4010/api/products/checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ items: dbItems }),
+        });
+      } catch (err) {
+        console.error("Failed to deduct stock:", err);
+      }
+    }
+
     showPopup({
-      title: "Order Placed Successfully! 🍵",
-      message: `Thank you for shopping with Karuya BhramanTea Tours! Your order for a total of ₹${cartTotal} has been placed. We will contact you at your registered email/phone for shipping updates.`,
+      title: "Order Placed Successfully! 🛍️",
+      message: `Thank you for shopping with Karuya Merchandise! Your order for a total of ₹${cartTotal} has been placed. We have processed your order and updated our inventory.`,
       type: "success",
       onClose: () => {
         clearCart();
         setIsCartOpen(false);
+        // Force reload to refresh stock numbers on the shop page
+        window.location.reload();
       },
     });
   };

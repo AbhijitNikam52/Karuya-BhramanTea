@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ChatWidget from "./components/ChatWidget";
 import CartDrawer from "./components/CartDrawer";
+import AdminSidebar from "./components/AdminSidebar";
 
 import Home from "./pages/Home";
 import Magazine from "./pages/Magazine";
@@ -25,14 +26,16 @@ import AdminShop from "./pages/AdminShop";
 
 function App() {
   const { pathname } = useLocation();
+  const isAdminPath = pathname.startsWith("/admin");
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="flex flex-col min-h-screen bg-[#FAF8F5]">
+      {!isAdminPath && <Header />}
+      <AdminSidebar />
 
       <main className="flex-grow">
         <Routes>
@@ -56,9 +59,9 @@ function App() {
         </Routes>
       </main>
 
-      <Footer />
-      <ChatWidget />
-      <CartDrawer />
+      {!isAdminPath && <Footer />}
+      {!isAdminPath && <ChatWidget />}
+      {!isAdminPath && <CartDrawer />}
     </div>
   );
 }
