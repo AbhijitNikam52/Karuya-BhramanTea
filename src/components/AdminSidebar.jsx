@@ -11,7 +11,8 @@ import {
   FaUsers, 
   FaSignOutAlt, 
   FaUserShield,
-  FaGlobe
+  FaGlobe,
+  FaNewspaper
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { useNotification } from "../context/NotificationContext";
@@ -42,6 +43,12 @@ function AdminSidebar() {
       name: "Shop Management",
       path: "/admin/shop",
       icon: <FaStore className="text-lg" />,
+      isPlaceholder: false,
+    },
+    {
+      name: "Blog Management",
+      path: "/admin/blogs",
+      icon: <FaNewspaper className="text-lg" />,
       isPlaceholder: false,
     },
     {
