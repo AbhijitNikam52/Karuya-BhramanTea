@@ -23,6 +23,7 @@ import Hinduism from "./pages/Hinduism";
 import Shop from "./pages/Shop";
 import BlogDetails from "./pages/BlogDetails";
 import AdminShop from "./pages/AdminShop";
+import AdminBlogs from "./pages/AdminBlogs";
 
 function App() {
   const { pathname } = useLocation();
@@ -56,6 +57,7 @@ function App() {
           <Route path="/hinduism" element={<Hinduism />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/admin/shop" element={<AdminShop />} />
+          <Route path="/admin/blogs" element={<AdminBlogs />} />
         </Routes>
       </main>
 
