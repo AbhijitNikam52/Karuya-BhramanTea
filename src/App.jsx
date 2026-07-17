@@ -24,6 +24,18 @@ import Shop from "./pages/Shop";
 import BlogDetails from "./pages/BlogDetails";
 import AdminShop from "./pages/AdminShop";
 import AdminBlogs from "./pages/AdminBlogs";
+import Profile from "./pages/Profile";
+import AdminPackages from "./pages/AdminPackages";
+import AdminGallery from "./pages/AdminGallery";
+import AdminDocuments from "./pages/AdminDocuments";
+import ClientDocuments from "./pages/ClientDocuments";
+import GalleryDetails from "./pages/GalleryDetails";
+import FAQ from "./pages/FAQ";
+import AdminFAQ from "./pages/AdminFAQ";
+import AdminTestimonials from "./pages/AdminTestimonials";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
+import AdminBanners from "./pages/AdminBanners";
 
 function App() {
   const { pathname } = useLocation();
@@ -56,8 +68,20 @@ function App() {
           <Route path="/state-tourism" element={<StateTourism />} />
           <Route path="/hinduism" element={<Hinduism />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/documents" element={<ClientDocuments />} />
+          <Route path="/gallery/:id" element={<GalleryDetails />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/admin/shop" element={<AdminShop />} />
           <Route path="/admin/blogs" element={<AdminBlogs />} />
+          <Route path="/admin/packages" element={<AdminPackages />} />
+          <Route path="/admin/gallery" element={<AdminGallery />} />
+          <Route path="/admin/documents" element={<AdminDocuments />} />
+          <Route path="/admin/faq" element={<AdminFAQ />} />
+          <Route path="/admin/testimonials" element={<AdminTestimonials />} />
+          <Route path="/admin/banners" element={<AdminBanners />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-conditions" element={<TermsConditions />} />
         </Routes>
       </main>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { FaSpinner, FaArrowLeft, FaCalendarAlt, FaUser, FaClock } from "react-icons/fa";
+import { FaSpinner, FaChevronLeft, FaCalendarAlt, FaUser, FaClock, FaBookOpen } from "react-icons/fa";
 
 function BlogDetails() {
   const { id } = useParams();
@@ -27,7 +27,7 @@ function BlogDetails() {
         if (blogResponse.ok && blogData.success) {
           setBlog(blogData.data);
 
-          // Fetch all blogs to filter for related articles
+          // Fetch related articles
           const allResponse = await fetch(`${apiUrl}/v1/blogs`);
           const allData = await allResponse.json();
           if (allResponse.ok && allData.success) {
@@ -91,72 +91,119 @@ function BlogDetails() {
   }
 
   return (
-    <div className="min-h-screen py-16 px-6 bg-[#FAF8F5]">
-      <div className="max-w-4xl mx-auto space-y-8">
-        
-        {/* Back Link */}
-        <div className="text-left">
-          <Link
-            to="/magazine"
-            className="inline-flex items-center gap-2 text-sm text-[#1F4027] hover:text-amber-800 font-semibold transition"
-          >
-            <FaArrowLeft size={10} /> Back to Magazine
-          </Link>
-        </div>
-
-        {/* Blog Header Card */}
-        <div className="bg-white border border-gray-100 p-8 md:p-12 rounded-3xl shadow-md text-left space-y-4">
-          <span className="text-xs uppercase tracking-widest font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full">
-            {blog.category}
-          </span>
-          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight leading-tight">
-            {blog.title}
-          </h1>
-          {blog.subtitle && (
-            <p className="text-gray-500 text-lg md:text-xl font-light italic">
-              {blog.subtitle}
-            </p>
-          )}
-
-          <div className="flex flex-wrap items-center gap-5 pt-4 border-t border-gray-50 text-xs text-gray-400 font-medium">
-            <span className="flex items-center gap-1.5">
-              <FaUser className="text-[#c5a880]" /> By {blog.author}
+    <div className="bg-gray-50 text-gray-800 min-h-screen pb-16">
+      
+      {/* 1. Hero Header Section (TourHero & GalleryDetails Style) */}
+      <section className="relative">
+        <div
+          className="h-[480px] bg-cover bg-center flex items-center justify-center relative overflow-hidden"
+          style={{
+            backgroundImage: `url(${blog.image})`,
+          }}
+        >
+          {/* Blurred background backing */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center blur-md opacity-25 scale-105"
+            style={{ backgroundImage: `url(${blog.image})` }}
+          />
+          {/* Shadow Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/35 to-black/60"></div>
+          
+          {/* Hero text overlay */}
+          <div className="relative z-10 text-center space-y-4 px-6 max-w-4xl">
+            <span className="text-xs uppercase tracking-widest font-bold text-amber-400 bg-amber-950/40 px-4 py-1.5 rounded-full border border-amber-400/20 backdrop-blur-sm">
+              {blog.category} Journal
             </span>
-            <span>•</span>
-            <span className="flex items-center gap-1.5">
-              <FaCalendarAlt className="text-[#c5a880]" /> {formatDate(blog.createdAt)}
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1.5">
-              <FaClock className="text-[#c5a880]" /> {blog.readTime}
-            </span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight font-display drop-shadow-md">
+              {blog.title}
+            </h1>
+            {blog.subtitle && (
+              <p className="text-gray-250 max-w-2xl mx-auto text-sm md:text-base font-light italic">
+                {blog.subtitle}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* Hero Image */}
-        <div className="rounded-3xl overflow-hidden shadow-lg aspect-[16/9] bg-gray-100">
-          <img
-            src={blog.image}
-            alt={blog.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        {/* 2. Floating Info Details Card */}
+        <div className="bg-white border border-gray-100 shadow-xl rounded-2xl max-w-5xl mx-auto p-6 md:p-8 -mt-16 relative z-10">
+          <div className="grid md:grid-cols-4 gap-6 text-center items-center">
+            <div className="space-y-1">
+              <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Author</p>
+              <p className="font-bold text-gray-800 text-sm md:text-base flex items-center justify-center gap-1.5">
+                <FaUser className="text-amber-700 text-xs" />
+                <span>{blog.author || "Admin"}</span>
+              </p>
+            </div>
+            
+            <div className="space-y-1 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0">
+              <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Published Date</p>
+              <p className="font-bold text-gray-800 text-sm md:text-base flex items-center justify-center gap-1.5">
+                <FaCalendarAlt className="text-amber-700 text-xs" />
+                <span>{formatDate(blog.createdAt)}</span>
+              </p>
+            </div>
 
-        {/* Article Body */}
-        <div className="bg-white border border-gray-100 p-8 md:p-12 rounded-3xl shadow-sm text-left space-y-6 text-gray-600 text-lg font-light leading-relaxed">
-          {renderFormattedContent(blog.content)}
+            <div className="space-y-1 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0">
+              <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Read Time</p>
+              <p className="font-bold text-[#1F4027] text-sm md:text-base flex items-center justify-center gap-1.5">
+                <FaClock className="text-[#1F4027] text-xs" />
+                <span>{blog.readTime || "5 Min Read"}</span>
+              </p>
+            </div>
+
+            <div className="border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0">
+              <Link 
+                to="/magazine"
+                className="w-full bg-[#1F4027] hover:bg-[#152e1c] text-white px-6 py-3.5 rounded-full font-medium transition duration-300 shadow-md hover:shadow-lg text-xs md:text-sm flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <FaChevronLeft size={10} /> Back to Journal
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Article Content & Sidebar Section */}
+      <section className="max-w-5xl mx-auto px-6 py-16 space-y-10">
+        <div className="grid md:grid-cols-3 gap-8 items-start">
           
-          {/* Custom Quote callout */}
-          <blockquote className="border-l-4 border-[#1F4027] pl-6 my-8 italic text-gray-800 font-medium font-display text-xl">
-            "Travel is not just about visiting new landscapes; it is about returning home with new eyes."
-          </blockquote>
+          {/* Main Article Content */}
+          <div className="md:col-span-2 bg-white rounded-3xl border border-gray-100 p-8 md:p-10 shadow-sm space-y-6 text-gray-650 font-light text-sm md:text-base leading-relaxed text-left">
+            {renderFormattedContent(blog.content)}
+            
+            <blockquote className="border-l-4 border-[#1F4027] pl-6 my-8 italic text-gray-800 font-medium font-display text-lg md:text-xl">
+              "Travel is not just about visiting new landscapes; it is about returning home with new eyes."
+            </blockquote>
+          </div>
+
+          {/* Quick Info Sidebar */}
+          <div className="bg-amber-50/40 border border-amber-100/50 p-6 rounded-3xl space-y-5 text-left">
+            <div className="flex items-center gap-2 text-[#1F4027]">
+              <FaBookOpen className="text-sm" />
+              <h3 className="font-bold text-xs uppercase tracking-wider">Karuya Journals</h3>
+            </div>
+            
+            <p className="text-xs text-gray-500 font-light leading-relaxed">
+              Explore custom reviews, wildlife sighting trackers, Spiti Valley guidelines, and Darjeeling packing lists curated by our experienced naturalists.
+            </p>
+            
+            <div className="border-t border-amber-200/20 pt-4">
+              <Link
+                to="/packages"
+                className="text-xs font-semibold text-[#1F4027] hover:text-amber-800 flex items-center gap-1"
+              >
+                <span>Browse active packages</span> <span>➔</span>
+              </Link>
+            </div>
+          </div>
         </div>
 
-        {/* Related Posts Section */}
+        {/* 4. Related Posts Section (At Bottom) */}
         {relatedBlogs.length > 0 && (
-          <div className="pt-16 space-y-8">
-            <div className="text-left space-y-2">
-              <span className="text-xs uppercase tracking-widest font-bold text-amber-700 font-sans">More to Read</span>
+          <div className="pt-12 space-y-6 border-t border-gray-200/60">
+            <div className="text-left space-y-1">
+              <span className="text-xs uppercase tracking-widest font-bold text-amber-700">More to Read</span>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight font-display">Related Articles</h2>
               <div className="w-12 h-0.5 bg-[#1F4027]"></div>
             </div>
@@ -165,9 +212,9 @@ function BlogDetails() {
               {relatedBlogs.map((rBlog) => (
                 <div
                   key={rBlog._id}
-                  className="bg-white border border-gray-100/80 shadow-sm hover:shadow-xl rounded-2xl overflow-hidden flex flex-col justify-between group transition-all duration-300"
+                  className="bg-white border border-gray-100 shadow-sm hover:shadow-md rounded-2xl overflow-hidden flex flex-col justify-between group transition-all duration-300"
                 >
-                  <div className="h-44 overflow-hidden relative bg-gray-100">
+                  <div className="h-44 overflow-hidden relative bg-gray-150">
                     <img
                       src={rBlog.image}
                       alt={rBlog.title}
@@ -179,15 +226,15 @@ function BlogDetails() {
                       <span className="text-[10px] uppercase tracking-wider text-amber-700 font-bold">
                         {rBlog.category}
                       </span>
-                      <h4 className="font-bold text-sm text-gray-900 group-hover:text-amber-800 transition line-clamp-2 leading-snug" title={rBlog.title}>
+                      <h4 className="font-bold text-xs md:text-sm text-gray-900 group-hover:text-amber-800 transition line-clamp-2 leading-snug">
                         {rBlog.title}
                       </h4>
                     </div>
                     <Link
                       to={`/magazine/${rBlog._id}`}
-                      className="text-xs font-semibold text-[#1F4027] hover:underline"
+                      className="text-xs font-semibold text-[#1F4027] hover:underline flex items-center gap-1"
                     >
-                      Read Story ➔
+                      <span>Read Story</span> <span>➔</span>
                     </Link>
                   </div>
                 </div>
@@ -195,13 +242,13 @@ function BlogDetails() {
             </div>
           </div>
         )}
+      </section>
 
-      </div>
     </div>
   );
 }
 
-// Helper to parse inline formatting (like bold text **bold**)
+// Inline formatting parser (supporting **bold** markup tags)
 const parseInlineFormatting = (text) => {
   if (!text) return "";
   const parts = text.split(/(\*\*.*?\*\*)/g);
@@ -217,45 +264,44 @@ const parseInlineFormatting = (text) => {
   });
 };
 
-// Custom Markdown-like parser for paragraphs, headers, and lists
+// Formatted block parsing engine
 const renderFormattedContent = (content) => {
   if (!content) return null;
 
-  // Split by double newlines to separate blocks
   const blocks = content.split(/\n\s*\n/);
 
   return blocks.map((block, index) => {
     const trimmedBlock = block.trim();
     if (!trimmedBlock) return null;
 
-    // Headers: # Header (H3 style), ## Sub-header (H4 style), ### Sub-sub-header (H5 style)
+    // Headers
     if (trimmedBlock.startsWith("### ")) {
       return (
-        <h5 key={index} className="text-lg font-bold text-gray-900 mt-6 mb-2">
+        <h5 key={index} className="text-base md:text-lg font-bold text-gray-900 mt-6 mb-2">
           {parseInlineFormatting(trimmedBlock.replace("### ", ""))}
         </h5>
       );
     }
     if (trimmedBlock.startsWith("## ")) {
       return (
-        <h4 key={index} className="text-xl font-bold text-gray-900 mt-8 mb-3">
+        <h4 key={index} className="text-lg md:text-xl font-bold text-gray-900 mt-8 mb-3">
           {parseInlineFormatting(trimmedBlock.replace("## ", ""))}
         </h4>
       );
     }
     if (trimmedBlock.startsWith("# ")) {
       return (
-        <h3 key={index} className="text-2xl font-extrabold text-gray-900 mt-10 mb-4">
+        <h3 key={index} className="text-xl md:text-2xl font-extrabold text-gray-900 mt-10 mb-4">
           {parseInlineFormatting(trimmedBlock.replace("# ", ""))}
         </h3>
       );
     }
 
-    // Unordered Lists: lines starting with - or *
+    // Unordered Lists
     if (trimmedBlock.startsWith("- ") || trimmedBlock.startsWith("* ")) {
       const lines = trimmedBlock.split("\n").map(l => l.trim()).filter(Boolean);
       return (
-        <ul key={index} className="list-disc pl-6 space-y-2 my-4 text-gray-700">
+        <ul key={index} className="list-disc pl-6 space-y-2 my-4 text-gray-700 text-xs md:text-sm">
           {lines.map((line, lIdx) => {
             const cleanLine = line.replace(/^[-*]\s+/, "");
             return <li key={lIdx}>{parseInlineFormatting(cleanLine)}</li>;
@@ -264,11 +310,11 @@ const renderFormattedContent = (content) => {
       );
     }
 
-    // Ordered Lists: lines starting with numbers (e.g. 1. )
+    // Ordered Lists
     if (/^\d+\.\s/.test(trimmedBlock)) {
       const lines = trimmedBlock.split("\n").map(l => l.trim()).filter(Boolean);
       return (
-        <ol key={index} className="list-decimal pl-6 space-y-2 my-4 text-gray-700">
+        <ol key={index} className="list-decimal pl-6 space-y-2 my-4 text-gray-700 text-xs md:text-sm">
           {lines.map((line, lIdx) => {
             const cleanLine = line.replace(/^\d+\.\s+/, "");
             return <li key={lIdx}>{parseInlineFormatting(cleanLine)}</li>;
@@ -277,19 +323,19 @@ const renderFormattedContent = (content) => {
       );
     }
 
-    // Blockquotes: lines starting with >
+    // Blockquotes
     if (trimmedBlock.startsWith("> ")) {
       const cleanQuote = trimmedBlock.replace(/^>\s+/, "");
       return (
-        <blockquote key={index} className="border-l-4 border-[#1F4027] pl-6 my-6 italic text-gray-800 font-medium text-lg">
+        <blockquote key={index} className="border-l-4 border-[#1F4027] pl-6 my-6 italic text-gray-800 font-medium text-base md:text-lg">
           {parseInlineFormatting(cleanQuote)}
         </blockquote>
       );
     }
 
-    // Standard Paragraph
+    // Paragraph
     return (
-      <p key={index} className="text-gray-600 leading-relaxed font-light mb-4">
+      <p key={index} className="text-gray-600 leading-relaxed font-light mb-4 text-xs md:text-sm">
         {parseInlineFormatting(trimmedBlock)}
       </p>
     );

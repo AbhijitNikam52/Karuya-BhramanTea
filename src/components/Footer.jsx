@@ -9,6 +9,7 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 import logo from "../assets/logo.png";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -130,8 +131,18 @@ function Footer() {
       </div>
 
       {/* ===== COPYRIGHT ===== */}
-      <div className="bg-[#16202d] py-3 text-center text-sm text-gray-400">
-        © 2026 Karuya Bhramanti. All rights reserved.
+      <div className="bg-[#16202d] py-4 text-center text-sm text-gray-400 border-t border-gray-700/30">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p>© 2026 Karuya Bhramanti. All rights reserved.</p>
+          <div className="flex gap-6 text-xs text-gray-450">
+            <Link to="/privacy-policy" className="hover:text-orange-400 transition">
+              Privacy Policy
+            </Link>
+            <Link to="/terms-conditions" className="hover:text-orange-400 transition">
+              Terms & Conditions
+            </Link>
+          </div>
+        </div>
       </div>
     </footer>
   );
