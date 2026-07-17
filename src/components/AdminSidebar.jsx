@@ -12,7 +12,12 @@ import {
   FaSignOutAlt, 
   FaUserShield,
   FaGlobe,
-  FaNewspaper
+  FaNewspaper,
+  FaImages,
+  FaFolderOpen,
+  FaQuestionCircle,
+  FaStar,
+  FaImage
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { useNotification } from "../context/NotificationContext";
@@ -53,8 +58,39 @@ function AdminSidebar() {
     },
     {
       name: "Packages Management",
+      path: "/admin/packages",
       icon: <FaBoxOpen className="text-lg" />,
-      isPlaceholder: true,
+      isPlaceholder: false,
+    },
+    {
+      name: "Gallery Management",
+      path: "/admin/gallery",
+      icon: <FaImages className="text-lg" />,
+      isPlaceholder: false,
+    },
+    {
+      name: "Documents Management",
+      path: "/admin/documents",
+      icon: <FaFolderOpen className="text-lg" />,
+      isPlaceholder: false,
+    },
+    {
+      name: "Banner Management",
+      path: "/admin/banners",
+      icon: <FaImage className="text-lg" />,
+      isPlaceholder: false,
+    },
+    {
+      name: "FAQ Management",
+      path: "/admin/faq",
+      icon: <FaQuestionCircle className="text-lg" />,
+      isPlaceholder: false,
+    },
+    {
+      name: "Testimonials Management",
+      path: "/admin/testimonials",
+      icon: <FaStar className="text-lg" />,
+      isPlaceholder: false,
     },
     {
       name: "Categories Management",
@@ -99,7 +135,7 @@ function AdminSidebar() {
 
       {/* Slide-out Sidebar Drawer */}
       <div
-        className={`fixed left-0 top-0 h-full w-80 bg-[#1F4027] text-white shadow-2xl z-[55] transition-all duration-300 ease-in-out flex flex-col justify-between border-r border-[#c5a880]/20 ${
+        className={`fixed left-0 top-0 h-full w-80 bg-[#1F4027] text-white shadow-2xl z-[55] transition-all duration-300 ease-in-out flex flex-col justify-between border-r border-[#c5a880]/20 overflow-y-auto scrollbar-thin ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -127,9 +163,17 @@ function AdminSidebar() {
 
           {/* User Profile Summary */}
           <div className="p-6 bg-white/5 border-b border-white/10 flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#c5a880]/20 rounded-full flex items-center justify-center text-white border border-[#c5a880]/30">
-              <FaUserShield className="text-lg text-[#c5a880]" />
-            </div>
+            {user?.profileImage ? (
+              <img
+                src={user.profileImage}
+                alt={user.name}
+                className="w-10 h-10 rounded-full object-cover border border-[#c5a880]/30"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-[#c5a880]/20 rounded-full flex items-center justify-center text-white border border-[#c5a880]/30">
+                <FaUserShield className="text-lg text-[#c5a880]" />
+              </div>
+            )}
             <div className="min-w-0">
               <p className="font-semibold text-sm truncate text-white">{user?.name}</p>
               <p className="text-xs text-gray-300 capitalize">{user?.role?.replace("_", " ")}</p>

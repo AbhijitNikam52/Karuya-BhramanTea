@@ -34,19 +34,40 @@ function Header() {
             Home
           </Link>
 
-          {/* ABOUT US */}
-          <Link to="/about" className={navLinkClass("/about")}>
-            About Us
-          </Link>
+          {/* EXPLORE DROPDOWN */}
+          <div className="relative group">
+            <button className="hover:text-amber-700 py-2 flex items-center gap-1 font-medium transition duration-300">
+              Explore
+              <span className="text-xs transition-transform duration-300 group-hover:rotate-180">▼</span>
+            </button>
 
-          {/* CONTACT US */}
-          <Link to="/contact" className={navLinkClass("/contact")}>
-            Contact Us
-          </Link>
+            <div className="absolute left-0 top-full pt-2 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
+              <div className="glass-dropdown rounded-xl w-48 p-2.5 space-y-1">
+                <Link
+                  to="/about"
+                  className="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-800 transition duration-200"
+                >
+                  About Us
+                </Link>
+                <Link
+                  to="/gallery"
+                  className="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-800 transition duration-200"
+                >
+                  Gallery
+                </Link>
+                <Link
+                  to="/contact"
+                  className="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-800 transition duration-200"
+                >
+                  Contact Us
+                </Link>
+              </div>
+            </div>
+          </div>
 
-          {/* GALLERY */}
-          <Link to="/gallery" className={navLinkClass("/gallery")}>
-            Gallery
+          {/* FAQ */}
+          <Link to="/faq" className={navLinkClass("/faq")}>
+            FAQ
           </Link>
 
           {/* SHOP */}
@@ -54,12 +75,7 @@ function Header() {
             Shop
           </Link>
 
-          {/* DASHBOARD (ADMIN ONLY) */}
-          {isAdmin && (
-            <Link to="/admin/shop" className={navLinkClass("/admin/shop")}>
-              Dashboard
-            </Link>
-          )}
+
 
           {/* MAGAZINE */}
           <div className="relative group">
@@ -166,20 +182,46 @@ function Header() {
 
           {user ? (
             <>
-              {isAdmin && (
+              {isAdmin ? (
                 <Link
                   to="/admin/shop"
-                  className="border border-[#1F4027] text-[#1F4027] hover:bg-[#1F4027] hover:text-white px-4 py-2.5 rounded-full font-medium transition text-sm"
+                  className="border border-[#1F4027] text-[#1F4027] hover:bg-[#1F4027] hover:text-white px-4 py-2 rounded-full font-medium transition text-sm"
                 >
                   Admin Panel
                 </Link>
+              ) : (
+                <Link
+                  to="/documents"
+                  className="text-gray-700 hover:text-amber-700 font-medium transition duration-300 text-sm flex items-center gap-1"
+                >
+                  📁 My Documents
+                </Link>
               )}
-              <span className="text-gray-600 text-sm font-medium">
-                Hi, {user.name.split(" ")[0]}
-              </span>
+              
+              <Link 
+                to="/profile" 
+                className="flex items-center gap-2 group cursor-pointer hover:opacity-90 transition"
+                title="Profile Settings"
+              >
+                {user.profileImage ? (
+                  <img
+                    src={user.profileImage}
+                    alt={user.name}
+                    className="w-8 h-8 rounded-full object-cover border border-amber-700/20"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-amber-50 border border-[#c5a880]/30 flex items-center justify-center text-amber-800 font-bold text-xs">
+                    {user.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()}
+                  </div>
+                )}
+                <span className="text-gray-750 text-sm font-semibold group-hover:text-amber-700 transition">
+                  Hi, {user.name.split(" ")[0]}
+                </span>
+              </Link>
+
               <button
                 onClick={logout}
-                className="text-gray-700 hover:text-red-700 font-medium transition duration-300 text-sm"
+                className="text-gray-650 hover:text-red-700 font-medium transition duration-300 text-sm"
               >
                 Logout
               </button>
@@ -216,28 +258,42 @@ function Header() {
               Home
             </Link>
 
-            <Link
-              to="/about"
-              onClick={() => setIsOpen(false)}
-              className="block font-medium py-2 border-b border-gray-100 hover:text-amber-800 transition"
-            >
-              About Us
-            </Link>
+            {/* EXPLORE MOBILE DROPDOWN */}
+            <details className="border-b border-gray-100 pb-2">
+              <summary className="cursor-pointer font-medium py-2 hover:text-amber-850 focus:outline-none">
+                Explore
+              </summary>
+              <div className="pl-4 mt-2 text-sm space-y-2 text-left">
+                <Link
+                  to="/about"
+                  onClick={() => setIsOpen(false)}
+                  className="block py-2 text-gray-650 hover:text-amber-850"
+                >
+                  About Us
+                </Link>
+                <Link
+                  to="/gallery"
+                  onClick={() => setIsOpen(false)}
+                  className="block py-2 text-gray-650 hover:text-amber-850"
+                >
+                  Gallery
+                </Link>
+                <Link
+                  to="/contact"
+                  onClick={() => setIsOpen(false)}
+                  className="block py-2 text-gray-650 hover:text-amber-850"
+                >
+                  Contact Us
+                </Link>
+              </div>
+            </details>
 
             <Link
-              to="/contact"
+              to="/faq"
               onClick={() => setIsOpen(false)}
               className="block font-medium py-2 border-b border-gray-100 hover:text-amber-800 transition"
             >
-              Contact Us
-            </Link>
-
-            <Link
-              to="/gallery"
-              onClick={() => setIsOpen(false)}
-              className="block font-medium py-2 border-b border-gray-100 hover:text-amber-800 transition"
-            >
-              Gallery
+              FAQ
             </Link>
 
             {/* SHOP */}
@@ -249,16 +305,7 @@ function Header() {
               Shop
             </Link>
 
-            {/* DASHBOARD (ADMIN ONLY) */}
-            {isAdmin && (
-              <Link
-                to="/admin/shop"
-                onClick={() => setIsOpen(false)}
-                className="block font-medium py-2 border-b border-gray-100 hover:text-amber-800 transition"
-              >
-                Dashboard
-              </Link>
-            )}
+
 
             {/* MAGAZINE */}
             <details className="border-b border-gray-100 pb-2">
@@ -371,15 +418,48 @@ function Header() {
 
               {user ? (
                 <div className="pt-2 border-t border-gray-100 flex flex-col gap-2">
-                  <span className="text-gray-500 text-sm">
-                    Logged in as: <span className="font-semibold text-gray-800">{user.name}</span>
-                  </span>
+                  <div className="flex items-center gap-2 px-1 py-1">
+                    {user.profileImage ? (
+                      <img
+                        src={user.profileImage}
+                        alt={user.name}
+                        className="w-9 h-9 rounded-full object-cover border border-amber-700/20"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-amber-50 border border-[#c5a880]/30 flex items-center justify-center text-amber-800 font-bold text-sm">
+                        {user.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <p className="font-bold text-gray-800 text-sm truncate">{user.name}</p>
+                      <p className="text-xs text-gray-450 truncate">{user.email}</p>
+                    </div>
+                  </div>
+                  
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsOpen(false)}
+                    className="block font-medium py-2 text-gray-700 hover:text-amber-800 border-b border-gray-50 text-sm pl-1"
+                  >
+                    👤 Profile Settings
+                  </Link>
+
+                  {!isAdmin && (
+                    <Link
+                      to="/documents"
+                      onClick={() => setIsOpen(false)}
+                      className="block font-medium py-2 text-gray-700 hover:text-amber-800 border-b border-gray-50 text-sm pl-1"
+                    >
+                      📁 My Documents
+                    </Link>
+                  )}
+
                   <button
                     onClick={() => {
                       logout();
                       setIsOpen(false);
                     }}
-                    className="w-full border border-red-200 hover:border-red-300 text-red-600 py-2.5 rounded-full text-center font-medium transition"
+                    className="w-full border border-red-200 hover:border-red-300 text-red-600 py-2.5 rounded-full text-center font-medium transition mt-2"
                   >
                     Logout
                   </button>
